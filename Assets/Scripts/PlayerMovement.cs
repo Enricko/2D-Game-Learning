@@ -1,49 +1,69 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
+    [SerializeField] private float jumpForce = 30f;
     private Rigidbody2D rb2;
     private SpriteRenderer sprite;
     private Animator anim;
+    private bool isGrounded;
 
-    public void Awake()
+    private void Awake()
     {
         rb2 = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
     }
 
-    public void Update()
+    private void Update()
     {
         float moveX = Input.GetAxis("Horizontal");
 
+        MovePlayer(moveX);
+        FlipCharacter(moveX);
+        UpdateAnimation(moveX);
+    }
+
+    private void MovePlayer(float moveX)
+    {
         rb2.velocity = new Vector2(moveX * speed, rb2.velocity.y);
 
-        FlipChar(moveX);
-
-        Jump();
-        MoveAnimation(moveX);
-    }
-    public void Jump()
-    {
-        if (Input.GetAxis("Jump") > 0)
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rb2.velocity = new Vector2(rb2.velocity.x, speed);
+            rb2.velocity = new Vector2(rb2.velocity.x, jumpForce);
+            isGrounded = false;
         }
     }
 
-    public void FlipChar(float moveX)
+    private void FlipCharacter(float moveX)
     {
-        if (moveX < 0)
-            sprite.flipX = true;
-        else if (moveX > 0)
-            sprite.flipX = false;
+        sprite.flipX = moveX < 0;
     }
-    public void MoveAnimation(float moveX)
+
+    private void UpdateAnimation(float moveX)
     {
-        anim.SetBool("run", moveX != 0);
+        anim.SetBool("isRun", moveX != 0);
+        anim.SetBool("isJump", !isGrounded);
+        anim.SetBool("isFall", rb2.velocity.y < 0 && !isGrounded);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 }

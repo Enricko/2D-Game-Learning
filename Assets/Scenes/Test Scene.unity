@@ -374,7 +374,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &564130735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,6 +388,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  jump: 20
+  isGrounded: 0
 --- !u!95 &564130736
 Animator:
   serializedVersion: 5
@@ -422,7 +424,7 @@ GameObject:
   - component: {fileID: 945227762}
   m_Layer: 0
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
